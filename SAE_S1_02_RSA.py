@@ -64,5 +64,3 @@ def key_creation():
         return n,pub
 
 
-je l'ai
-
