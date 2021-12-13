@@ -87,3 +87,54 @@ def decryption(n, priv,msg) :
 		dechiffrer4 = dechiffrer4 + chr(int(dechiffrer3[a]))
 		a = a+1
 	return dechiffrer4
+
+
+
+#PARTIE 2 
+
+def f42() :
+	e1 = [1,0,0,0]
+	e2 = [0,1,0,0]
+	e3 = [0,0,1,0]
+	e4 = [0,0,0,1]
+	df = []
+	s = [0,1]
+	for x1 in s :
+		for x2 in s :
+			for x3 in s :
+				for x4 in s :
+					d = []
+					for i in range(0,4) :
+						d.append((x1*e1[i])+(x2*e2[i])+(x3*e3[i])+(x4*e4[i])) 
+					df.append(d)	
+	return df
+
+def f72() :
+	df = f42()
+	dd = []
+	for i in df :
+		dd.append([(i[0]+i[1]+i[3])%2,(i[0]+i[2]+i[3])%2,i[0],(i[1]+i[2]+i[3])%2,i[1],i[2],i[3]])
+	return dd 
+
+
+
+def poids() :
+	dd = f72()
+	for i in range(0,len(dd)-1) :
+		for y in range (i+1,len(dd)) :
+			compteur = 0
+			dp = []
+			for z in range(0,7):
+				dp.append((dd[i][z] + dd[y][z])%2)
+				if dp[z] ==1 :
+					compteur = compteur+1
+			if compteur<3 :
+				return False	
+	return True
+
+
+
+
+
+
+
