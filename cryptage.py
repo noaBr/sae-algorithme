@@ -40,6 +40,8 @@ def key_creation() :
 		if pgcd_it(phi,e)==1:
 			pub = e
 			test = True
+	c, d,dd = extended_gcd(pub,phi)
+	priv = d%phi
 	return phi, pub
 
 def conv_text(msg) :
