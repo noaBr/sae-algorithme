@@ -51,9 +51,11 @@ def extended_gcd(a,b):
 def key_creation() :
 	n=0
 	while n<=10000 :
-		n = 0
-		p = choice(list_prime(200))
-		q = choice(list_prime(200))
+		p = 0 
+		q = 0
+		while p == q :
+			p = choice(list_prime(1000))
+			q = choice(list_prime(1000))
 		n = p*q
 	phi = (p-1)*(q-1)
 	test = False
@@ -133,31 +135,32 @@ def img(bin4) :
 	for nombre in bin4 : #tableau represantant un nombre separer
 		dd.append([])
 		for y in range(0,len(nombre)) :#chiffre du nombre etape
-			i = [] 
-			i.append(nombre[y])
-			print(i)
+			i = ""  + (nombre[y])
 			dd[len(dd)-1].append([(int(i[0])+int(i[1])+int(i[3]))%2,(int(i[0])+int(i[2])+int(i[3]))%2,int(i[0]),(int(i[1])+int(i[2])+int(i[3]))%2,int(i[1]),int(i[2]),int(i[3])])
 	return dd 
 
 def noise(msg) :
 	res = []
 	for i in range(0,len(msg)) :
-		vect = msg[i].copy()
-		test = np.random.randint(0,4)
-		if test>0 :
-			index = np.random.randint(0,np.size(vect))
-			vect[index] = (vect[index]+1)%2
-		res.append(vect)
+		res.append([])
+		for y  in range(0,len(msg[i])) :
+			vect = msg[i][y].copy()
+			test = np.random.randint(0,4)
+			if test>0 :
+				index = np.random.randint(0,np.size(vect))
+				vect[index] = (vect[index]+1)%2
+			res[len(res)-1].append(vect)
 	return res
 
-def denoise(vect_msg) :
+def denoise(msg) :
 	ds = f72()
-	for i in range(0,len(vect_msg)) :
-		for y in range(0,len(ds)) :
-			if poids(vect_msg[i],ds[y])==0 or poids(vect_msg[i],ds[y])==1 :
-				vect_msg[i]=ds[y]
-				break
-	return vect_msg
+	for i in range(0,len(msg)) :
+		for y in range(0,len(msg[i])) :
+			for z in range(0,len(ds)) :
+				if poids(msg[i][y],ds[z])==0 or poids(msg[i][y],ds[z])==1 :
+					msg[i][y]=ds[z]
+					break
+	return msg
 
 def poids(u, v) :
 	dd =[]
@@ -171,11 +174,18 @@ def poids(u, v) :
 def antecedent(msg) :
 	newmsg = []
 	for i in range(0,len(msg)) :
-		newmsg.append(str(msg[i][2])+str(msg[i][4])+str(msg[i][5])+str(msg[i][6]))
+		newmsg.append([])
+		for y in range(0,len(msg[i])) :
+			newmsg[len(newmsg)-1].append(str(msg[i][y][2])+str(msg[i][y][4])+str(msg[i][y][5])+str(msg[i][y][6]))
 	return newmsg
 	
-
-
+def detradbin(msg) :
+	newmsg = []
+	for i in range(0,len(msg)) :
+		newmsg.append("")
+		for y in range(0,len(msg[i])) :
+			newmsg[i] = newmsg[i] + str((int(msg[i][y][0])*8)+(int(msg[i][y][1])*4)+(int(msg[i][y][2])*2)+(int(msg[i][y][3])*1))
+	return newmsg
 
 
 def f42() :
@@ -217,6 +227,21 @@ def demopoids() :
 			if compteur<3 :
 				return False	
 	return True
+
+
+
+def test(num) :
+	compteur = 0
+	for i in range(0,num) :
+		a,b,c = key_creation()
+		d = decryption(a,c,detradbin(antecedent(denoise(noise(img(tradbin(encryption(a,b,"florian tu pues ta gorsse mere"))))))))
+		if d != "florian tu pues ta gorsse mere" :
+			compteur = compteur +1
+			print(i,d, "faux")
+		else :
+			print(i, "vrai")
+	return compteur
+
 
 
 
