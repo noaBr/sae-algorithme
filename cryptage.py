@@ -1,3 +1,6 @@
+from random import *
+import numpy as np
+
 def list_prime(n) :
 	if n!=0 :
 		l=[1]
@@ -10,8 +13,6 @@ def list_prime(n) :
 			if test==False :
 				l=l+[i] 
 	return l
-
-
 
 def qotrem(a,b):
 	q=0
@@ -29,10 +30,31 @@ def pgcd_it(a,b):
 		r=qotrem(a,b)[1]
 	return b
 
+def extended_gcd(a,b):
+	u0=1
+	u1=0
+	v0=0
+	v1=1
+	q,r=qotrem(a,b)
+	while r!=0:
+		u2=u0-q*u1
+		v2=v0-q*v1
+		u0=u1
+		v0=v1
+		u1=u2
+		v1=v2
+		a=b
+		b=r
+		q,r=qotrem(a,b)
+	return b,u1,v1   
+
 def key_creation() :
-	p = choice(list_prime(200))
-	q = choice(list_prime(200))
-	n = p*q
+	n=0
+	while n<=10000 :
+		n = 0
+		p = choice(list_prime(200))
+		q = choice(list_prime(200))
+		n = p*q
 	phi = (p-1)*(q-1)
 	test = False
 	while test == False :
@@ -42,7 +64,9 @@ def key_creation() :
 			test = True
 	c, d,dd = extended_gcd(pub,phi)
 	priv = d%phi
-	return phi, pub
+	return n, pub, priv
+
+
 
 def conv_text(msg) :
 	crypt = []
@@ -84,15 +108,75 @@ def decryption(n, priv,msg) :
 		dechiffrer3.append(dechiffrer2[i:i+3])
 	if int(dechiffrer3[len(dechiffrer3)-1])==0 :
 		dechiffrer3 = dechiffrer3 [:len(dechiffrer3)-1]
-	print(dechiffrer3)
 	while a<len(dechiffrer3) :
 		dechiffrer4 = dechiffrer4 + chr(int(dechiffrer3[a]))
 		a = a+1
 	return dechiffrer4
 
+def tradbin(msg) :
+	newmsg = []
+	for i in range(0,len(msg)) :
+		newmsg.append([])
+		for y in range(0,len(msg[i])) :
+			newmsg[i].append(bin(int(msg[i][y])))
+	for i in range(0,len(newmsg)) :
+		for y in range(0,len(newmsg[i])) :
+			newmsg[i][y] = newmsg[i][y][2:]
+			while len(newmsg[i][y])<4 :
+				newmsg[i][y] = str(0) + newmsg[i][y]
+	return newmsg	
 
 
-#PARTIE 2 
+
+def img(bin4) :
+	dd = []
+	for nombre in bin4 : #tableau represantant un nombre separer
+		dd.append([])
+		for y in range(0,len(nombre)) :#chiffre du nombre etape
+			i = [] 
+			i.append(nombre[y])
+			print(i)
+			dd[len(dd)-1].append([(int(i[0])+int(i[1])+int(i[3]))%2,(int(i[0])+int(i[2])+int(i[3]))%2,int(i[0]),(int(i[1])+int(i[2])+int(i[3]))%2,int(i[1]),int(i[2]),int(i[3])])
+	return dd 
+
+def noise(msg) :
+	res = []
+	for i in range(0,len(msg)) :
+		vect = msg[i].copy()
+		test = np.random.randint(0,4)
+		if test>0 :
+			index = np.random.randint(0,np.size(vect))
+			vect[index] = (vect[index]+1)%2
+		res.append(vect)
+	return res
+
+def denoise(vect_msg) :
+	ds = f72()
+	for i in range(0,len(vect_msg)) :
+		for y in range(0,len(ds)) :
+			if poids(vect_msg[i],ds[y])==0 or poids(vect_msg[i],ds[y])==1 :
+				vect_msg[i]=ds[y]
+				break
+	return vect_msg
+
+def poids(u, v) :
+	dd =[]
+	compteur = 0
+	for i in range(0,len(u)) :
+		dd.append((u[i]+v[i])%2)
+		if dd[i] ==1 :
+			compteur = compteur+1	
+	return compteur
+
+def antecedent(msg) :
+	newmsg = []
+	for i in range(0,len(msg)) :
+		newmsg.append(str(msg[i][2])+str(msg[i][4])+str(msg[i][5])+str(msg[i][6]))
+	return newmsg
+	
+
+
+
 
 def f42() :
 	e1 = [1,0,0,0]
@@ -120,7 +204,7 @@ def f72() :
 
 
 
-def poids() :
+def demopoids() :
 	dd = f72()
 	for i in range(0,len(dd)-1) :
 		for y in range (i+1,len(dd)) :
@@ -133,6 +217,8 @@ def poids() :
 			if compteur<3 :
 				return False	
 	return True
+
+
 
 
 
