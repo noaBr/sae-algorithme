@@ -182,5 +182,14 @@ def decryption(n, priv, msg) :
 	return dechiffrer4
 
 
+def chiffrement_rsa(msg):
+	n,pub,priv=key_creation()
+	print("ceci est la traduction en nombre du message de Bob :",conv_text(msg))
+	print("ceci est le chiffrement du message",encryption(n,pub,msg))
+	print("ceci est la traduction en binaire en 4 bits :",tradbin(encryption(n,pub,msg)))
+	print("ceci est la traduction en binaire sur 7 bits :",img(tradbin(encryption(n,pub,msg))))
+	print("ceci est l'envoi du message avec du bruit :",noise(img(tradbin(encryption(n,pub,msg)))))
+	print("ceci est le débruitage du message :",denoise(noise(img(tradbin(encryption(n,pub,msg))))))
+	print("ceci est le message final :",decryption(n,priv,detradbin(antecedent(denoise(noise(img(tradbin(encryption(n,pub,msg)))))))))
 
 
